@@ -6,7 +6,7 @@ function Read() {
 
 
     const [data, setData] = useState([]);
-
+//use effect is a react hook that allows 
     useEffect(() => {
         axios.get('https://jsonblob.com/api/jsonblob/1161593332966481920')
             .then(
