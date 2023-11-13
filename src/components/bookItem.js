@@ -9,9 +9,9 @@ function BookItem(props) {
         <Card.Header>{props.mybook.title}</Card.Header>
         <Card.Body>
           <blockquote className="blockquote mb-0">
-            <img src={props.mybook.thumbnailUrl}></img>
+            <img src={props.mybook.cover}></img>
             <footer>
-              {props.mybook.authors[0]}
+              {props.mybook.author}
             </footer>
           </blockquote>
         </Card.Body>

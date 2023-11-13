@@ -17,6 +17,24 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+// getting-started.js
+const mongoose = require('mongoose');
+
+main().catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb+srv://admin:admin@cluster0.pxynhtv.mongodb.net/?retryWrites=true&w=majority');
+
+}
+
+const bookSchema = new mongoose.Schema({
+  title: String,
+  cover: String,
+  author: String
+})
+
+const bookModel = mongoose.model('books',bookSchema);
+
 app.post('/name', (req, res) => {
 console.log("post method");
 console.log(req.body.firstname);
@@ -25,7 +43,21 @@ res.send('Hello ' + req.body.firstname + " " + req.body.lastname);
 
 app.post('/api/book', (req, res)=>{
 console.log(req.body);
-res.send("Book Created");
+
+bookModel.create({
+title:req.body.title,
+cover:req.body.cover,
+author:req.body.author
+
+})
+.then(
+  ()=>{res.send("Data Received!")}
+)
+.catch(
+  ()=>{res.send("Data NOT Received!!")}
+)
+
+
 })
 
 
@@ -33,45 +65,18 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/api/books', (req, res)=>{
+app.get('/api/books', async (req, res)=>{
 
+let books = await bookModel.find({});
+console.log(books);
+res.json(books);
 
-const data =  [
-    {
-    "title": "Learn Git in a Month of Lunches",
-    "isbn": "1617292419",
-    "pageCount": 0,
-    "thumbnailUrl":"https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/umali.jpg",
-    "status": "MEAP",
-    "authors": ["Rick Umali"],
-    "categories": []
-    },
-   
-    {
-    "title": "MongoDB in Action, Second Edition",
-    "isbn": "1617291609",
-    "pageCount": 0,
-    "thumbnailUrl":
-    "https://s3.amazonaws.com/AKIAJC5RLADLUMVRPFDQ.book-thumb-images/banker2.jpg",
-    "status": "MEAP",
-    "authors": [
-    "Kyle Banker",
-    "Peter Bakkum",
-    "Tim Hawkins",
-    "Shaun Verch",
-    "Douglas Garrett"
-    ],
-    "categories": []
-    }
-    ]
-    ;
-    
+})
 
-    res.json({
-        myBooks:data,
-        "MyMessage":"Hello Data"
-    })
-
+app.get('/api/book/:id' ,async (req,res)=>{
+  console.log(req.params.id);
+  let book = await bookModel.findById({_id:req.params.id})
+  res.send(book);
 })
 
 app.listen(port, () => {
